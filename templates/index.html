@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF to Handwriting Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Indie+Flower&family=Patrick+Hand&family=Shadows+Into+Light&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <span class="brand-icon">✍️</span>
+        <span class="brand-name">Handwriter<span class="brand-accent">Pro</span></span>
+      </div>
+      <div class="nav-badge">Free &amp; Open Source</div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🚀 AI-Powered Handwriting Generator</div>
+      <h1 class="hero-title">
+        Transform Any Text Into<br />
+        <span class="gradient-text">Realistic Handwriting</span>
+      </h1>
+      <p class="hero-subtitle">
+        Convert PDFs, images, or typed text into beautiful handwritten notes.
+        Download as JPG or PDF instantly.
+      </p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">5+</span><span class="stat-label">Font Styles</span></div>
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">Paper Types</span></div>
+        <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Pages</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN APP ── -->
+  <main class="app-container">
+
+    <!-- ── STEP 1: INPUT ── -->
+    <section class="card step-card">
+      <div class="card-header">
+        <div class="step-badge">01</div>
+        <h2>Upload or Type Your Content</h2>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="tab-switcher">
+        <button class="tab-btn active" data-tab="upload">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload File
+        </button>
+        <button class="tab-btn" data-tab="text">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          Type Text
+        </button>
+      </div>
+
+      <!-- Upload Tab -->
+      <div class="tab-content active" id="tab-upload">
+        <div
+          class="dropzone"
+          id="dropzone"
+          role="button"
+          tabindex="0"
+          aria-label="Drop PDF, JPG, or PNG file here"
+        >
+          <div class="dropzone-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <p class="dropzone-title">Drag &amp; Drop your file here</p>
+          <p class="dropzone-subtitle">Supports PDF, JPG, PNG • Max 16MB</p>
+          <label class="btn btn-secondary btn-sm" for="file-input">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Browse Files
+          </label>
+          <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.bmp,.tiff,.webp" hidden />
+        </div>
+
+        <!-- File Info -->
+        <div class="file-info" id="file-info" hidden>
+          <div class="file-card">
+            <div class="file-icon" id="file-type-icon">📄</div>
+            <div class="file-details">
+              <p class="file-name" id="file-name"></p>
+              <p class="file-size" id="file-size"></p>
+            </div>
+            <button class="btn btn-icon btn-danger" id="remove-file" title="Remove file">✕</button>
+          </div>
+        </div>
+
+        <!-- Extract Button -->
+        <div class="action-row" id="extract-row" hidden>
+          <button class="btn btn-primary" id="extract-btn">
+            <span class="btn-text">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Extract Text
+            </span>
+            <span class="btn-spinner hidden"><div class="spinner-sm"></div> Extracting...</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Text Tab -->
+      <div class="tab-content" id="tab-text">
+        <div class="textarea-wrapper">
+          <textarea
+            id="text-input"
+            class="text-area"
+            placeholder="Type or paste your text here...&#10;&#10;Tip: Use blank lines to create paragraph breaks."
+            rows="10"
+            aria-label="Input text"
+          ></textarea>
+          <div class="textarea-footer">
+            <span class="char-count" id="char-count">0 characters</span>
+            <div class="textarea-actions">
+              <button class="btn btn-ghost btn-xs" id="clear-text">Clear</button>
+              <button class="btn btn-ghost btn-xs" id="sample-text">Load Sample</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extracted Text -->
+      <div class="extracted-section" id="extracted-section" hidden>
+        <div class="section-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Extracted Text
+          <button class="btn btn-ghost btn-xs" id="edit-extracted">Edit</button>
+        </div>
+        <div class="extracted-preview" id="extracted-preview"></div>
+        <textarea id="extracted-text" class="text-area mt-sm" rows="6" hidden></textarea>
+      </div>
+    </section>
+
+    <!-- ── STEP 2: SETTINGS ── -->
+    <section class="card step-card">
+      <div class="card-header">
+        <div class="step-badge">02</div>
+        <h2>Customize Your Handwriting</h2>
+      </div>
+
+      <div class="settings-grid">
+
+        <!-- Font Style -->
+        <div class="setting-group">
+          <label class="setting-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            Handwriting Style
+          </label>
+          <div class="font-picker" id="font-picker">
+            <div class="font-option active" data-style="style1">
+              <span class="font-preview" style="font-family:'Caveat'">Hello World</span>
+              <span class="font-name">Caveat</span>
+            </div>
+            <div class="font-option" data-style="style3">
+              <span class="font-preview" style="font-family:'Indie Flower'">Hello World</span>
+              <span class="font-name">Indie Flower</span>
+            </div>
+            <div class="font-option" data-style="style4">
+              <span class="font-preview" style="font-family:'Patrick Hand'">Hello World</span>
+              <span class="font-name">Patrick Hand</span>
+            </div>
+            <div class="font-option" data-style="style5">
+              <span class="font-preview" style="font-family:'Shadows Into Light'">Hello World</span>
+              <span class="font-name">Shadows Into Light</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paper Style -->
+        <div class="setting-group">
+          <label class="setting-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+            Paper Style
+          </label>
+          <div class="paper-picker">
+            <label class="paper-option" data-paper="ruled">
+              <input type="radio" name="paper" value="ruled" checked hidden />
+              <div class="paper-preview ruled-preview">
+                <div class="preview-line red-line"></div>
+                <div class="preview-line"></div>
+                <div class="preview-line"></div>
+                <div class="preview-line"></div>
+              </div>
+              <span>Ruled</span>
+            </label>
+            <label class="paper-option" data-paper="plain">
+              <input type="radio" name="paper" value="plain" hidden />
+              <div class="paper-preview plain-preview">
+                <div class="preview-dots"></div>
+              </div>
+              <span>Plain</span>
+            </label>
+            <label class="paper-option" data-paper="exam">
+              <input type="radio" name="paper" value="exam" hidden />
+              <div class="paper-preview exam-preview">
+                <div class="preview-header-box"></div>
+                <div class="preview-line"></div>
+                <div class="preview-line"></div>
+              </div>
+              <span>Exam Sheet</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Ink Color -->
+        <div class="setting-group">
+          <label class="setting-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            Ink Color
+          </label>
+          <div class="color-picker">
+            <button class="color-btn active" data-color="blue" title="Blue ink"
+              style="--ink:#1e3cb4" aria-label="Blue ink">
+              <svg viewBox="0 0 20 20" fill="var(--ink)"><circle cx="10" cy="10" r="8"/></svg>
+              Blue
+            </button>
+            <button class="color-btn" data-color="black" title="Black ink"
+              style="--ink:#141414" aria-label="Black ink">
+              <svg viewBox="0 0 20 20" fill="var(--ink)"><circle cx="10" cy="10" r="8"/></svg>
+              Black
+            </button>
+            <button class="color-btn" data-color="dark_blue" title="Dark Blue"
+              style="--ink:#0a1e78" aria-label="Dark Blue">
+              <svg viewBox="0 0 20 20" fill="var(--ink)"><circle cx="10" cy="10" r="8"/></svg>
+              Dark Blue
+            </button>
+            <button class="color-btn" data-color="pencil" title="Pencil"
+              style="--ink:#505050" aria-label="Pencil gray">
+              <svg viewBox="0 0 20 20" fill="var(--ink)"><circle cx="10" cy="10" r="8"/></svg>
+              Pencil
+            </button>
+            <button class="color-btn" data-color="red" title="Red"
+              style="--ink:#b41414" aria-label="Red ink">
+              <svg viewBox="0 0 20 20" fill="var(--ink)"><circle cx="10" cy="10" r="8"/></svg>
+              Red
+            </button>
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="setting-group sliders-group">
+          <div class="slider-item">
+            <label class="setting-label" for="font-size">
+              Font Size
+              <span class="slider-value" id="font-size-val">32px</span>
+            </label>
+            <input
+              type="range" id="font-size" name="fontSize"
+              min="16" max="64" step="2" value="32"
+              class="range-slider" aria-label="Font size"
+            />
+            <div class="slider-ticks">
+              <span>16</span><span>32</span><span>48</span><span>64</span>
+            </div>
+          </div>
+
+          <div class="slider-item">
+            <label class="setting-label" for="line-spacing">
+              Line Spacing
+              <span class="slider-value" id="line-spacing-val">60px</span>
+            </label>
+            <input
+              type="range" id="line-spacing" name="lineSpacing"
+              min="40" max="120" step="5" value="60"
+              class="range-slider" aria-label="Line spacing"
+            />
+            <div class="slider-ticks">
+              <span>Tight</span><span>Normal</span><span>Wide</span>
+            </div>
+          </div>
+
+          <div class="slider-item">
+            <label class="setting-label" for="margin">
+              Page Margin
+              <span class="slider-value" id="margin-val">80px</span>
+            </label>
+            <input
+              type="range" id="margin" name="margin"
+              min="20" max="200" step="10" value="80"
+              class="range-slider" aria-label="Page margin"
+            />
+            <div class="slider-ticks">
+              <span>Narrow</span><span>Normal</span><span>Wide</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.settings-grid -->
+    </section>
+
+    <!-- ── STEP 3: GENERATE ── -->
+    <section class="card step-card generate-card">
+      <div class="card-header">
+        <div class="step-badge">03</div>
+        <h2>Generate &amp; Download</h2>
+      </div>
+
+      <div class="generate-actions">
+        <button class="btn btn-primary btn-lg" id="generate-btn">
+          <span class="btn-text">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            Generate Handwriting
+          </span>
+          <span class="btn-spinner hidden">
+            <div class="spinner-sm"></div>
+            Generating...
+          </span>
+        </button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-section" id="progress-section" hidden>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+        <p class="progress-label" id="progress-label">Processing...</p>
+      </div>
+
+      <!-- Error Display -->
+      <div class="alert alert-error" id="error-alert" hidden role="alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></svg>
+        <span id="error-message"></span>
+      </div>
+
+      <!-- Success Alert -->
+      <div class="alert alert-success" id="success-alert" hidden role="status">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="success-message"></span>
+      </div>
+    </section>
+
+    <!-- ── PREVIEW ── -->
+    <section class="card preview-card" id="preview-card" hidden>
+      <div class="card-header">
+        <div class="preview-header-info">
+          <h2>Preview</h2>
+          <span class="page-count-badge" id="page-count-badge">1 page</span>
+        </div>
+        <div class="preview-nav" id="preview-nav" hidden>
+          <button class="btn btn-icon btn-ghost" id="prev-page" title="Previous page" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="page-indicator" id="page-indicator">1 / 1</span>
+          <button class="btn btn-icon btn-ghost" id="next-page" title="Next page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Image -->
+      <div class="preview-wrapper">
+        <div class="page-shadow">
+          <img
+            id="preview-image"
+            class="preview-image"
+            alt="Handwritten page preview"
+            src=""
+          />
+        </div>
+      </div>
+
+      <!-- Download Section -->
+      <div class="download-section">
+        <p class="download-label">Download your handwritten notes</p>
+        <div class="download-btns">
+          <button class="btn btn-download btn-pdf" id="download-pdf">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Download PDF
+            <span class="badge">All Pages</span>
+          </button>
+          <button class="btn btn-download btn-jpg" id="download-jpg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Download JPG
+            <span class="badge" id="jpg-badge">1 Image</span>
+          </button>
+        </div>
+        <div class="download-spinner" id="download-spinner" hidden>
+          <div class="spinner-md"></div>
+          <span>Preparing download...</span>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /.app-container -->
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>HandwriterPro &copy; 2024 &mdash; Convert text to beautiful handwriting instantly.</p>
+      <p class="footer-tech">Built with Python Flask + Pillow</p>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
